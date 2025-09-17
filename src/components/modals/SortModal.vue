@@ -70,7 +70,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, computed } from "vue";
+import { ref, watch } from "vue";
 import { Modal, Select, Button } from "ant-design-vue";
 import { DeleteOutlined, PlusOutlined } from "@ant-design/icons-vue";
 
