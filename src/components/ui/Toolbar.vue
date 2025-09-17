@@ -41,7 +41,6 @@ import { Button, InputSearch } from "ant-design-vue";
 import {
   DownOutlined,
   SortAscendingOutlined,
-  UserOutlined,
   DeleteOutlined,
   FilterOutlined,
 } from "@ant-design/icons-vue";
@@ -50,7 +49,7 @@ interface Props {
   selectedTaskIds?: string[];
 }
 
-const props = withDefaults(defineProps<Props>(), {
+withDefaults(defineProps<Props>(), {
   selectedTaskIds: () => [],
 });
 
@@ -59,8 +58,6 @@ const searchQuery = ref("");
 const emit = defineEmits<{
   "new-task": [];
   search: [query: string];
-  "person-filter": [];
-  sort: [];
   delete: [];
   openPersonFilter: [];
   openSortModal: [];
@@ -75,14 +72,6 @@ const handleSearch = (value?: string) => {
   emit("search", query);
 };
 
-const handlePersonFilter = () => {
-  emit("person-filter");
-};
-
-const handleSort = () => {
-  emit("sort");
-};
-
 const showPersonFilter = () => {
   emit("openPersonFilter");
 };
@@ -95,5 +84,3 @@ const handleDelete = () => {
   emit("delete");
 };
 </script>
-
-<style scoped></style>

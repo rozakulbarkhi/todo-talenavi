@@ -53,5 +53,3 @@ const handleViewChange = (view: ViewType) => {
   emit("view-change", view);
 };
 </script>
-
-<style scoped></style>
