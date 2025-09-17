@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 import { ref, computed } from "vue";
-import type { Task, TaskRequest } from "@/types/api/tasks";
+import type { Task, TaskRequest, Status } from "@/types/api/tasks";
 import {
   getTasks as getTasksAPI,
   updateTask as updateTaskAPI,
@@ -12,7 +12,11 @@ import {
 export const useTasksStore = defineStore("tasks", () => {
   const tasks = ref<Task[]>([]);
   const isLoading = ref(false);
+  const isCreating = ref(false);
+  const isUpdating = ref(false);
+  const isDeleting = ref(false);
   const error = ref<string | null>(null);
+  const operationError = ref<string | null>(null);
   const editingCells = ref<Record<string, string>>({});
   const searchQuery = ref<string>("");
   const selectedTaskIds = ref<string[]>([]);
@@ -191,25 +195,25 @@ export const useTasksStore = defineStore("tasks", () => {
 
   async function addTask(task: TaskRequest) {
     try {
-      isLoading.value = true;
-      error.value = null;
+      isCreating.value = true;
+      operationError.value = null;
 
       const newTask = await createTaskAPI(task);
 
       tasks.value.unshift(newTask);
     } catch (err) {
-      error.value =
+      operationError.value =
         err instanceof Error ? err.message : "Failed to create task";
       console.error("Error creating task:", err);
     } finally {
-      isLoading.value = false;
+      isCreating.value = false;
     }
   }
 
   async function deleteTask(id: string) {
     try {
-      isLoading.value = true;
-      error.value = null;
+      isDeleting.value = true;
+      operationError.value = null;
 
       await deleteTaskAPI(id);
 
@@ -223,11 +227,11 @@ export const useTasksStore = defineStore("tasks", () => {
         }
       }
     } catch (err) {
-      error.value =
+      operationError.value =
         err instanceof Error ? err.message : "Failed to delete task";
       console.error("Error deleting task:", err);
     } finally {
-      isLoading.value = false;
+      isDeleting.value = false;
     }
   }
 
@@ -252,10 +256,36 @@ export const useTasksStore = defineStore("tasks", () => {
     }
   }
 
+  async function updateTaskStatus(taskId: string, newStatus: Status) {
+    try {
+      const task = tasks.value.find((t) => t.id === taskId);
+      if (!task) {
+        throw new Error("Task not found");
+      }
+
+      const updatedTask = { ...task, status: newStatus };
+      await updateTaskAPI(taskId, updatedTask);
+
+      const index = tasks.value.findIndex((t) => t.id === taskId);
+      if (index > -1) {
+        tasks.value[index] = updatedTask;
+      }
+    } catch (err) {
+      error.value =
+        err instanceof Error ? err.message : "Failed to update task status";
+      console.error("Error updating task status:", err);
+      throw err;
+    }
+  }
+
   return {
     tasks,
     isLoading,
+    isCreating,
+    isUpdating,
+    isDeleting,
     error,
+    operationError,
     editingCells,
     searchQuery,
     selectedTaskIds,
@@ -281,5 +311,6 @@ export const useTasksStore = defineStore("tasks", () => {
     addTask,
     deleteTask,
     deleteTasks,
+    updateTaskStatus,
   };
 });
