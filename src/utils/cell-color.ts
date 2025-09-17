@@ -1,48 +1,30 @@
-export const getStatusColor = (status: string) => {
-  switch (status) {
-    case "Waiting for review":
-      return "bg-blue-500";
-    case "Ready to start":
-      return "bg-red-500";
-    case "In Progress":
-      return "bg-orange-500";
-    case "Done":
-      return "bg-green-500";
-    case "Stuck":
-      return "bg-gray-500";
-    case "Pending Deploy":
-      return "bg-purple-500";
-    default:
-      return "bg-gray-400";
-  }
+import { STATUS_COLORS, PRIORITY_COLORS, TYPE_COLORS } from "@/constants";
+
+const hexToTailwindClass = (hex: string): string => {
+  const colorMap: Record<string, string> = {
+    "#3b82f6": "bg-blue-500",
+    "#ef4444": "bg-red-500",
+    "#f97316": "bg-orange-500",
+    "#22c55e": "bg-green-500",
+    "#6b7280": "bg-gray-500",
+    "#a855f7": "bg-purple-500",
+    "#dc2626": "bg-red-600",
+    "#ec4899": "bg-pink-500",
+  };
+  return colorMap[hex] || "bg-gray-400";
 };
 
-export const getTypeColor = (type: string) => {
-  switch (type) {
-    case "Feature Enhancements":
-      return "bg-pink-500";
-    case "Bug":
-      return "bg-red-500";
-    case "Other":
-      return "bg-purple-500";
-    default:
-      return "bg-gray-400";
-  }
+export const getStatusColor = (status: string): string => {
+  const hex = STATUS_COLORS[status];
+  return hex ? hexToTailwindClass(hex) : "bg-gray-400";
 };
 
-export const getPriorityColor = (priority: string) => {
-  switch (priority) {
-    case "Critical":
-      return "bg-red-600";
-    case "High":
-      return "bg-red-500";
-    case "Medium":
-      return "bg-blue-500";
-    case "Low":
-      return "bg-green-500";
-    case "Best Effort":
-      return "bg-gray-500";
-    default:
-      return "bg-gray-400";
-  }
+export const getTypeColor = (type: string): string => {
+  const hex = TYPE_COLORS[type];
+  return hex ? hexToTailwindClass(hex) : "bg-gray-400";
+};
+
+export const getPriorityColor = (priority: string): string => {
+  const hex = PRIORITY_COLORS[priority];
+  return hex ? hexToTailwindClass(hex) : "bg-gray-400";
 };
